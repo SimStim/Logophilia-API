@@ -9,7 +9,9 @@ use App\Controllers\APIControllers;
 use App\Middleware\CorsMiddleware;
 use App\Middleware\AuthMiddleware;
 
-echo REPO;
+header(header: "Content-Type: application/json; charset=UTF-8");
+echo json_encode(REPO);
+exit;
 
 /**
  * try {

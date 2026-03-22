@@ -9,14 +9,14 @@ final class APIControllers
     public static function processGreeting(string $method): void
     {
         header(header: "Content-Type: application/json; charset=UTF-8");
-        if ($method !== 'GET') {
+        if ($method === 'GET') {
             echo json_encode([
                 'message' => 'Welcome to Logophilia API.',
                 'status' => 'success'
             ]);
         } else {
             echo json_encode([
-                "message" => "This is Logophilia API, and you're too pushy.",
+                "message" => "This is Logophilia API, and you're very pushy.",
                 "status" => "partial success"
             ]);
         }
