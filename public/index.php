@@ -26,7 +26,7 @@ try {
 $requestUri = $_SERVER['REQUEST_URI'];
 $method = $_SERVER['REQUEST_METHOD'];
 
-if (!in_array($requestUri, ["/", "/download", "/contact", "/newsletter", "/submission"])) {
+if (!in_array($requestUri, ["/", "/index.php", "/download", "/contact", "/newsletter", "/submission"])) {
     http_response_code(response_code: 404);
     echo json_encode([
         'message' => strtoupper(string: 'Route not defined.'),
@@ -36,7 +36,7 @@ if (!in_array($requestUri, ["/", "/download", "/contact", "/newsletter", "/submi
 }
 
 switch ($requestUri) {
-    case "/":
+    case ["/", "/index.php"]:
         APIControllers::processGreeting($method);
         break;
     case "/download":
