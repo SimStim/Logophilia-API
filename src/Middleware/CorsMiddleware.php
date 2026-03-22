@@ -30,7 +30,7 @@ class CorsMiddleware
         if ($isAllowedOrigin) {
             header(header: "Access-Control-Allow-Origin: $origin");
             header(header: "Access-Control-Allow-Methods: GET, POST");
-            header(header: "Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
+            header(header: "Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With, X-Api-key");
         } elseif ($origin) {
             // If Origin is present but not allowed, deny access
             http_response_code(response_code: 403);

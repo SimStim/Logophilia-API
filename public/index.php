@@ -5,6 +5,7 @@ declare(strict_types=1);
 require_once __DIR__ . '/../vendor/autoload.php';
 
 use App\Middleware\CorsMiddleware;
+use App\Middleware\AuthMiddleware;
 
 /**
 try {
@@ -13,6 +14,12 @@ try {
     exit($e->getMessage());
 }
 */
+
+try {
+    new AuthMiddleware()->handle();
+} catch (Exception $e) {
+    exit($e->getMessage());
+}
 
 header(header: "Content-Type: application/json; charset=UTF-8");
 
