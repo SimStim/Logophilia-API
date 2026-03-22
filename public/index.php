@@ -3,13 +3,14 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../vendor/autoload.php';
-define(constant_name: "REPO", value: realpath(path: __DIR__ . "../../"));
+define(constant_name: "REPO", value: realpath(path: __DIR__ . "/../.."));
 
 use App\Controllers\APIControllers;
 use App\Middleware\CorsMiddleware;
 use App\Middleware\AuthMiddleware;
 
 header(header: "Content-Type: application/json; charset=UTF-8");
+echo json_encode(__DIR__);
 echo json_encode(REPO);
 exit;
 
