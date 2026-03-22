@@ -3,17 +3,21 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../vendor/autoload.php';
+define(constant_name: "REPO", value: dirname(path: __DIR__ . "../../repository/"));
 
+use App\Controllers\APIControllers;
 use App\Middleware\CorsMiddleware;
 use App\Middleware\AuthMiddleware;
 
+echo REPO;
+
 /**
-try {
-    new CorsMiddleware()->handle();
-} catch (Exception $e) {
-    exit($e->getMessage());
-}
-*/
+ * try {
+ * new CorsMiddleware()->handle();
+ * } catch (Exception $e) {
+ * exit($e->getMessage());
+ * }
+ */
 
 try {
     new AuthMiddleware()->handle();
@@ -21,21 +25,68 @@ try {
     exit($e->getMessage());
 }
 
-header(header: "Content-Type: application/json; charset=UTF-8");
-
 $requestUri = $_SERVER['REQUEST_URI'];
 $method = $_SERVER['REQUEST_METHOD'];
 
-// Simple router
-if ($requestUri === '/' || $requestUri === '/index.php') {
-    echo json_encode([
-        'message' => 'Welcome to Logophilia API',
-        'status' => 'success'
-    ]);
-} else {
+if (!in_array($requestUri, ["/", "/download", "/contact", "/newsletter", "/submission"])) {
     http_response_code(response_code: 404);
     echo json_encode([
-        'message' => 'Not Found',
+        'message' => strtoupper(string: 'Route not defined.'),
         'status' => 'error'
     ]);
+    exit;
+}
+
+switch ($requestUri) {
+    case "/":
+        APIControllers::processGreeting($method);
+        break;
+    case "/download":
+        APIControllers::processDownload($method);
+        break;
+    case "/contact":
+        if ($method !== 'POST') {
+            http_response_code(response_code: 405);
+            echo json_encode([
+                'message' => strtoupper(string: 'Method not permitted for this route.'),
+                'status' => 'error'
+            ]);
+            exit;
+        }
+        header(header: "Content-Type: application/json; charset=UTF-8");
+        echo json_encode([
+            'message' => 'Message sent successfully.',
+            'status' => 'success'
+        ]);
+        break;
+    case "/newsletter":
+        if ($method !== 'POST') {
+            http_response_code(response_code: 405);
+            echo json_encode([
+                'message' => strtoupper(string: 'Method not permitted for this route.'),
+                'status' => 'error'
+            ]);
+            exit;
+        }
+        header(header: "Content-Type: application/json; charset=UTF-8");
+        echo json_encode([
+            'message' => 'Newsletter signup successful.',
+            'status' => 'success'
+        ]);
+        break;
+    case "/submission":
+        if ($method !== 'POST') {
+            http_response_code(response_code: 405);
+            echo json_encode([
+                'message' => strtoupper(string: 'Method not permitted for this route.'),
+                'status' => 'error'
+            ]);
+            exit;
+        }
+        header(header: "Content-Type: application/json; charset=UTF-8");
+        echo json_encode([
+            'message' => 'Manuscript submission processed successfully.',
+            'status' => 'success'
+        ]);
+        break;
 }
