@@ -21,13 +21,13 @@ class APIModels
         return true;
     }
 
-    public static function sendFile(string $filePath): bool
+    public static function sendFile(string $fileName): bool
     {
-        $filePath = REPO . $filePath;
+        $filePath = REPO . $fileName;
         if (file_exists($filePath)) {
             header(header: "Content-Description: File Transfer");
             header(header: "Content-Type: application/pdf"); // Set the appropriate MIME type
-            header(header: "Content-Disposition: attachment; filename=\"" . basename($filePath) . "\"");
+            header(header: "Content-Disposition: attachment; filename=\"$fileName\"");
             header(header: "Expires: 0");
             header(header: "Cache-Control: must-revalidate");
             header(header: "Pragma: public");
