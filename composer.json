@@ -1,0 +1,11 @@
+{
+    "name": "logophilia/api",
+    "description": "Simple REST API for Logophilia",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    },
+    "require": {}
+}
