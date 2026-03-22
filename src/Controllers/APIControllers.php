@@ -47,6 +47,6 @@ final class APIControllers
             ]);
             return false;
         }
-        return APIModels::sendFile(filePath: $_GET['fileName'] ?? "");
+        return APIModels::sendFile(fileName: $_GET['fileName'] ?? "");
     }
 }

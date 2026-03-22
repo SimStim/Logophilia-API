@@ -24,9 +24,10 @@ try {
 }
 
 $requestUri = $_SERVER['REQUEST_URI'];
+$route = explode(separator: '?', string: $requestUri)[0];
 $method = $_SERVER['REQUEST_METHOD'];
 
-if (!in_array($requestUri, ["/", "/download", "/contact", "/newsletter", "/submission"])) {
+if (!in_array($route, ["/", "/download", "/contact", "/newsletter", "/submission"])) {
     http_response_code(response_code: 404);
     echo json_encode([
         'message' => strtoupper(string: 'Route not defined.'),
@@ -35,7 +36,7 @@ if (!in_array($requestUri, ["/", "/download", "/contact", "/newsletter", "/submi
     exit;
 }
 
-switch ($requestUri) {
+switch ($route) {
     case "/":
         APIControllers::processGreeting($method);
         break;
