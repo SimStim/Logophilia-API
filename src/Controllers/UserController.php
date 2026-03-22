@@ -4,7 +4,7 @@ namespace App\Controllers;
 
 class UserController
 {
-    public function index()
+    public function index(): array
     {
         return [
             'users' => [
