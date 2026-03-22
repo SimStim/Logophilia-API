@@ -41,7 +41,6 @@ switch ($route) {
         APIControllers::processGreeting($method);
         break;
     case "/download":
-        echo "xxxxxx";
         APIControllers::processDownload($method);
         break;
     case "/contact":

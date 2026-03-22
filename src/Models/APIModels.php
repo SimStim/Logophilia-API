@@ -33,7 +33,6 @@ class APIModels
             header(header: "Pragma: public");
             header(header: "Content-Length: " . filesize($filePath));
             // Read the file content and output it to the browser
-            echo $filePath;
             readfile($filePath);
         } else {
             header(header: "Content-Type: application/json; charset=UTF-8");
