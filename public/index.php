@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../vendor/autoload.php';
-define(constant_name: "REPO", value: realpath(path: __DIR__ . "/../.."));
+define(constant_name: "REPO", value: realpath(path: __DIR__ . "/../repository/"));
 
 use App\Controllers\APIControllers;
 use App\Middleware\CorsMiddleware;
