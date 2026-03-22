@@ -23,7 +23,7 @@ class APIModels
 
     public static function sendFile(string $filePath): bool
     {
-        $filePath = __DIR__ . '/../../public/files/' . $filePath;
+        $filePath = REPO . $filePath;
         if (file_exists($filePath)) {
             header(header: "Content-Description: File Transfer");
             header(header: "Content-Type: application/pdf"); // Set the appropriate MIME type
