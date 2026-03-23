@@ -46,6 +46,7 @@ final class APIControllers
             'status' => 'success',
             "POST" => $_POST,
             "METHOD" => $method,
+            "SERVER" => $_SERVER,
         ]);
         return true;
         $errors = [];
