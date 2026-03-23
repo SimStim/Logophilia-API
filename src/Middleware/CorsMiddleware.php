@@ -27,7 +27,7 @@ class CorsMiddleware
         $isAllowedOrigin = $origin && in_array($origin, $this->allowedOrigins);
         // CORS check
         if ($isAllowedOrigin) {
-            header(header: "Access-Control-Allow-Origin: *");   // $origin
+            header(header: "Access-Control-Allow-Origin: $origin");
             header(header: "Access-Control-Allow-Methods: GET, POST, OPTIONS");
             header(header: "Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With, X-Api-key");
         } elseif ($origin) {
