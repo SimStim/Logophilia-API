@@ -43,7 +43,8 @@ final class APIControllers
         header(header: "Content-Type: application/json; charset=UTF-8");
         echo json_encode([
             'message' => 'Message sent successfully.',
-            'status' => 'success'
+            'status' => 'success',
+            "POST" => $_POST,
         ]);
         return true;
         $errors = [];
