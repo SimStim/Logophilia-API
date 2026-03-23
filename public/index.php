@@ -18,11 +18,13 @@ use App\Middleware\AuthMiddleware;
  * }
  */
 
-try {
-    new AuthMiddleware()->handle();
-} catch (Exception $e) {
-    exit($e->getMessage());
-}
+/**
+ * try {
+ * new AuthMiddleware()->handle();
+ * } catch (Exception $e) {
+ * exit($e->getMessage());
+ * }
+ */
 
 $method = $_SERVER['REQUEST_METHOD'];
 $requestUri = $_SERVER['REQUEST_URI'];
