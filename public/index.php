@@ -23,9 +23,7 @@ try {
  * exit($e->getMessage());
  * }
  */
-$input = json_decode(file_get_contents(filename: 'php://input'), associative: true);
-var_dump($input);
-exit;
+
 $method = $_SERVER['REQUEST_METHOD'];
 $requestUri = $_SERVER['REQUEST_URI'];
 $route = explode(separator: '?', string: $requestUri)[0];

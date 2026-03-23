@@ -38,14 +38,13 @@ final class APIControllers
     public static function processContact(string $method): bool
     {
 //        if (self::checkMethod(actualMethod: $method, permittedMethod: 'POST')) return false;
-        $input = json_decode(file_get_contents(filename: 'php://input'), associative: true);
-        $email = $input->post("email") ?? "";
-        $message = $input->post("message") ?? "";
+        $email = $_POST["email"] ?? "";
+        $message = $_POST["message"] ?? "";
         header(header: "Content-Type: application/json; charset=UTF-8");
         echo json_encode([
             'message' => 'Message sent successfully.',
             'status' => 'success',
-            "POST" => $input->post,
+            "POST" => $_POST,
             "METHOD" => $method,
             "SERVER" => $_SERVER,
         ]);
@@ -69,8 +68,7 @@ final class APIControllers
     public static function processNewsletter(string $method): bool
     {
         if (self::checkMethod(actualMethod: $method, permittedMethod: 'POST')) return false;
-        $input = json_decode(file_get_contents(filename: 'php://input'), associative: true);
-        $email = $input->post("email") ?? "";
+        $email = $_POST["email"] ?? "";
         if (!$email) {
             http_response_code(response_code: 422);
             echo json_encode([
