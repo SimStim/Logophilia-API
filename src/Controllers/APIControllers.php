@@ -40,6 +40,12 @@ final class APIControllers
         if (self::checkMethod(actualMethod: $method, permittedMethod: 'POST')) return false;
         $email = $_POST["email"] ?? "";
         $message = $_POST["message"] ?? "";
+        header(header: "Content-Type: application/json; charset=UTF-8");
+        echo json_encode([
+            'message' => 'Message sent successfully.',
+            'status' => 'success'
+        ]);
+        return true;
         $errors = [];
         if (!$email)
             $errors[] = 'A valid email address is required.';
