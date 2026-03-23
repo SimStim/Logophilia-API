@@ -94,7 +94,7 @@ class APIModels
 
     public static function processContact(string $email, string $message): bool
     {
-        if (!self::verifyEmail($email)) return false;
+//        if (!self::verifyEmail($email)) return false;
         $headers = [
             'From: postmaster@logophilia.eu',
             'Reply-To: ' . $email,
