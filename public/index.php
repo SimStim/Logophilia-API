@@ -10,13 +10,11 @@ use App\Controllers\APIControllers;
 use App\Middleware\CorsMiddleware;
 use App\Middleware\AuthMiddleware;
 
-/**
- * try {
- * new CorsMiddleware()->handle();
- * } catch (Exception $e) {
- * exit($e->getMessage());
- * }
- */
+try {
+    new CorsMiddleware()->handle();
+} catch (Exception $e) {
+    exit($e->getMessage());
+}
 
 /**
  * try {
