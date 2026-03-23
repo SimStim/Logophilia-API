@@ -92,7 +92,7 @@ class APIModels
         return true;
     }
 
-    public static function processContact(string $email, string $message): bool
+    public static function processContact(string $email, string $message, string $consent): bool
     {
         if (!self::verifyEmail($email)) return false;
         $headers = [
@@ -106,6 +106,7 @@ class APIModels
         $body .= "Email:   $email\n";
         $body .= "Message:\n$message\n\n";
         $body .= "---\n";
+        $body .= "Consent: $consent\n";
         $body .= "IP: " . $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0' . "\n";
         $body .= "Time: " . date(format: 'Y-m-d H:i:s T') . "\n";
         $sent = mail(
@@ -131,7 +132,7 @@ class APIModels
         }
     }
 
-    public static function processNewsletter(string $email): bool
+    public static function processNewsletter(string $email, string $consent): bool
     {
         if (!self::verifyEmail($email)) return false;
         $headers = [
@@ -140,6 +141,7 @@ class APIModels
             'X-Mailer: Logophilia-Newsletter/1.0',
         ];
         $body = "New newsletter subscriber: $email\n";
+        $body .= "Consent: $consent\n";
         $body .= "IP: " . $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0' . "\n";
         $body .= "Time: " . date(format: 'Y-m-d H:i:s T') . "\n";
         $sent = mail(

@@ -41,6 +41,7 @@ final class APIControllers
         if (!self::checkMethod(actualMethod: $method, permittedMethod: 'POST')) return false;
         $email = $_POST["email"] ?? "";
         $message = $_POST["message"] ?? "";
+        $consent = $_POST["consent"] ?? "";
         $errors = [];
         if (!$email)
             $errors[] = 'A valid email address is required.';
@@ -54,13 +55,14 @@ final class APIControllers
             ]);
             return false;
         }
-        return APIModels::processContact(email: $email, message: $message);
+        return APIModels::processContact(email: $email, message: $message, consent: $consent);
     }
 
     public static function processNewsletter(string $method): bool
     {
         if (!self::checkMethod(actualMethod: $method, permittedMethod: 'POST')) return false;
         $email = $_POST["email"] ?? "";
+        $consent = $_POST["consent"] ?? "";
         if (!$email) {
             http_response_code(response_code: 422);
             echo json_encode([
@@ -69,7 +71,7 @@ final class APIControllers
             ]);
             return false;
         }
-        return APIModels::processNewsletter(email: $email);
+        return APIModels::processNewsletter(email: $email, consent: $consent);
     }
 
     public static function processSubmission(string $method): bool
