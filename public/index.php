@@ -3,7 +3,8 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../vendor/autoload.php';
-define(constant_name: "REPO", value: realpath(path: __DIR__ . "/../repository/") . "/");
+define(constant_name: "DOWNLOADS", value: realpath(path: __DIR__ . "/../downloads/") . "/");
+define(constant_name: "UPLOADS", value: realpath(path: __DIR__ . "/../uploads/") . "/");
 
 use App\Controllers\APIControllers;
 use App\Middleware\CorsMiddleware;
@@ -23,18 +24,9 @@ try {
     exit($e->getMessage());
 }
 
+$method = $_SERVER['REQUEST_METHOD'];
 $requestUri = $_SERVER['REQUEST_URI'];
 $route = explode(separator: '?', string: $requestUri)[0];
-$method = $_SERVER['REQUEST_METHOD'];
-
-if (!in_array($route, ["/", "/download", "/contact", "/newsletter", "/submission"])) {
-    http_response_code(response_code: 404);
-    echo json_encode([
-        'message' => strtoupper(string: 'Route not defined.'),
-        'status' => 'error'
-    ]);
-    exit;
-}
 
 switch ($route) {
     case "/":
@@ -44,48 +36,18 @@ switch ($route) {
         APIControllers::processDownload($method);
         break;
     case "/contact":
-        if ($method !== 'POST') {
-            http_response_code(response_code: 405);
-            echo json_encode([
-                'message' => strtoupper(string: 'Method not permitted for this route.'),
-                'status' => 'error'
-            ]);
-            exit;
-        }
-        header(header: "Content-Type: application/json; charset=UTF-8");
-        echo json_encode([
-            'message' => 'Message sent successfully.',
-            'status' => 'success'
-        ]);
+        APIControllers::processContact($method);
         break;
     case "/newsletter":
-        if ($method !== 'POST') {
-            http_response_code(response_code: 405);
-            echo json_encode([
-                'message' => strtoupper(string: 'Method not permitted for this route.'),
-                'status' => 'error'
-            ]);
-            exit;
-        }
-        header(header: "Content-Type: application/json; charset=UTF-8");
-        echo json_encode([
-            'message' => 'Newsletter signup successful.',
-            'status' => 'success'
-        ]);
+        APIControllers::processNewsletter($method);
         break;
     case "/submission":
-        if ($method !== 'POST') {
-            http_response_code(response_code: 405);
-            echo json_encode([
-                'message' => strtoupper(string: 'Method not permitted for this route.'),
-                'status' => 'error'
-            ]);
-            exit;
-        }
-        header(header: "Content-Type: application/json; charset=UTF-8");
-        echo json_encode([
-            'message' => 'Manuscript submission processed successfully.',
-            'status' => 'success'
-        ]);
+        APIControllers::processSubmission($method);
         break;
+    default:
+        http_response_code(response_code: 404);
+        echo json_encode([
+            'message' => strtoupper(string: 'Route not defined.'),
+            'status' => 'error'
+        ]);
 }
