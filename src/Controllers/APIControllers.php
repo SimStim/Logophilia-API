@@ -38,13 +38,14 @@ final class APIControllers
     public static function processContact(string $method): bool
     {
         if (self::checkMethod(actualMethod: $method, permittedMethod: 'POST')) return false;
-        $email = $_POST["email"] ?? "";
-        $message = $_POST["message"] ?? "";
+        $input = json_decode(file_get_contents(filename: 'php://input'), associative: true);
+        $email = $input->post("email") ?? "";
+        $message = $input->post("message") ?? "";
         header(header: "Content-Type: application/json; charset=UTF-8");
         echo json_encode([
             'message' => 'Message sent successfully.',
             'status' => 'success',
-            "POST" => $_POST,
+            "POST" => $input->post,
             "METHOD" => $method,
             "SERVER" => $_SERVER,
         ]);
