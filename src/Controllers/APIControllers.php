@@ -45,6 +45,7 @@ final class APIControllers
             'message' => 'Message sent successfully.',
             'status' => 'success',
             "POST" => $_POST,
+            "METHOD" => $method,
         ]);
         return true;
         $errors = [];
