@@ -38,6 +38,10 @@ final class APIControllers
 
     public static function processContact(string $method): bool
     {
+        http_response_code(response_code: 235);
+        echo json_encode([
+            "BEEP" => "Controller"
+        ]);
         if (self::checkMethod(actualMethod: $method, permittedMethod: 'POST')) return false;
         $email = $_POST["email"] ?? "";
         $message = $_POST["message"] ?? "";

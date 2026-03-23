@@ -94,6 +94,10 @@ class APIModels
 
     public static function processContact(string $email, string $message): bool
     {
+        http_response_code(response_code: 236);
+        echo json_encode([
+            "BEEP" => "Model"
+        ]);
         if (!self::verifyEmail($email)) return false;
         $headers = [
             'From: postmaster@logophilia.eu',
