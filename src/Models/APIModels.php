@@ -98,6 +98,7 @@ class APIModels
         $headers = [
             'From: postmaster@logophilia.eu',
             'Reply-To: ' . $email,
+            "Cc: $email\r\n",
             'Content-Type: text/plain; charset=UTF-8',
             'X-Mailer: Logophilia-Contact/1.0',
         ];
@@ -137,6 +138,7 @@ class APIModels
         if (!self::verifyEmail($email)) return false;
         $headers = [
             'From: noreply@logophilia.eu',
+            "Cc: $email\r\n",
             'Content-Type: text/plain; charset=UTF-8',
             'X-Mailer: Logophilia-Newsletter/1.0',
         ];
