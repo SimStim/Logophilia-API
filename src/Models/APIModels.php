@@ -94,7 +94,7 @@ class APIModels
 
     public static function processContact(string $email, string $message): bool
     {
-//        if (!self::verifyEmail($email)) return false;
+        if (!self::verifyEmail($email)) return false;
         $headers = [
             'From: postmaster@logophilia.eu',
             'Reply-To: ' . $email,
@@ -116,6 +116,7 @@ class APIModels
         );
         if ($sent) {
             header(header: "Content-Type: application/json; charset=UTF-8");
+            http_response_code(response_code: 234);
             echo json_encode([
                 'message' => 'Message sent successfully.',
                 'status' => 'success'

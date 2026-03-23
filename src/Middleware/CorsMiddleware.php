@@ -49,13 +49,11 @@ class CorsMiddleware
         // Referrer check (for direct access or from other sites)
         // If it's not a CORS request (no Origin), we check Referer
         if (!$origin) {
-            $refererHost = parse_url($referer, PHP_URL_HOST);
+            $refererHost = parse_url(url: $referer, component: PHP_URL_HOST);
             $isAllowedReferer = false;
             foreach ($this->allowedOrigins as $allowedOrigin) {
-                if ($refererHost === parse_url($allowedOrigin, PHP_URL_HOST)) {
-                    $isAllowedReferer = true;
-                    break;
-                }
+                if ($refererHost !== parse_url(url: $allowedOrigin, component: PHP_URL_HOST)) continue;
+                $isAllowedReferer = true;
             }
             if (!$isAllowedReferer) {
                 http_response_code(response_code: 403);
