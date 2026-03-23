@@ -7,15 +7,14 @@ define(constant_name: "DOWNLOADS", value: realpath(path: __DIR__ . "/../download
 define(constant_name: "UPLOADS", value: realpath(path: __DIR__ . "/../uploads/") . "/");
 
 use App\Controllers\APIControllers;
-use App\Middleware\CorsMiddleware;
 use App\Middleware\AuthMiddleware;
+use App\Middleware\CorsMiddleware;
 
 try {
     new CorsMiddleware()->handle();
 } catch (Exception $e) {
     exit($e->getMessage());
 }
-
 
 try {
     new AuthMiddleware()->handle();
@@ -29,28 +28,20 @@ $route = explode(separator: '?', string: $requestUri)[0];
 
 switch ($route) {
     case "/":
-        APIControllers::processGreeting($method);
-        break;
+        return APIControllers::processGreeting($method);
     case "/download":
-        APIControllers::processDownload($method);
-        break;
+        return APIControllers::processDownload($method);
     case "/contact":
-        APIControllers::processContact($method);
-        break;
+        return APIControllers::processContact($method);
     case "/newsletter":
-        APIControllers::processNewsletter($method);
-        break;
+        return APIControllers::processNewsletter($method);
     case "/submission":
-        APIControllers::processSubmission($method);
-        break;
+        return APIControllers::processSubmission($method);
     default:
         http_response_code(response_code: 404);
         echo json_encode([
             'message' => strtoupper(string: 'Route not defined.'),
             'status' => 'error'
         ]);
+        return false;
 }
-http_response_code(response_code: 234);
-echo json_encode([
-    "ROUTE" => $route,
-]);

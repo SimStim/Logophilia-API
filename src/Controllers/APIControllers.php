@@ -19,10 +19,9 @@ final class APIControllers
         return true;
     }
 
-    public static function processGreeting(string $method): void
+    public static function processGreeting(string $method): bool
     {
         header(header: "Content-Type: application/json; charset=UTF-8");
-        http_response_code(response_code: 234);
         if ($method === 'GET') {
             echo json_encode([
                 'message' => 'Welcome to Logophilia API.',
@@ -34,15 +33,12 @@ final class APIControllers
                 "status" => "partial success"
             ]);
         }
+        return true;
     }
 
     public static function processContact(string $method): bool
     {
-        http_response_code(response_code: 235);
-        echo json_encode([
-            "BEEP" => "Controller"
-        ]);
-        if (self::checkMethod(actualMethod: $method, permittedMethod: 'POST')) return false;
+        if (!self::checkMethod(actualMethod: $method, permittedMethod: 'POST')) return false;
         $email = $_POST["email"] ?? "";
         $message = $_POST["message"] ?? "";
         $errors = [];
@@ -63,7 +59,7 @@ final class APIControllers
 
     public static function processNewsletter(string $method): bool
     {
-        if (self::checkMethod(actualMethod: $method, permittedMethod: 'POST')) return false;
+        if (!self::checkMethod(actualMethod: $method, permittedMethod: 'POST')) return false;
         $email = $_POST["email"] ?? "";
         if (!$email) {
             http_response_code(response_code: 422);
@@ -78,13 +74,13 @@ final class APIControllers
 
     public static function processSubmission(string $method): bool
     {
-        if (self::checkMethod(actualMethod: $method, permittedMethod: 'POST')) return false;
+        if (!self::checkMethod(actualMethod: $method, permittedMethod: 'POST')) return false;
         return APIModels::processSubmission();
     }
 
     public static function processDownload(string $method): bool
     {
-        if (self::checkMethod(actualMethod: $method, permittedMethod: 'GET')) return false;
+        if (!self::checkMethod(actualMethod: $method, permittedMethod: 'GET')) return false;
         return APIModels::sendFile(fileName: $_GET['fileName'] ?? "");
     }
 }
