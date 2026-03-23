@@ -50,3 +50,7 @@ switch ($route) {
             'status' => 'error'
         ]);
 }
+http_response_code(response_code: 234);
+echo json_encode([
+    "ROUTE" => $route,
+]);
