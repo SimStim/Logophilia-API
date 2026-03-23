@@ -22,6 +22,7 @@ final class APIControllers
     public static function processGreeting(string $method): void
     {
         header(header: "Content-Type: application/json; charset=UTF-8");
+        http_response_code(response_code: 234);
         if ($method === 'GET') {
             echo json_encode([
                 'message' => 'Welcome to Logophilia API.',

@@ -192,7 +192,7 @@ class APIModels
             return false;
         }
         if ($file['size'] > self::MAX_FILE_SIZE_BYTES) {
-            http_response_code(400);
+            http_response_code(response_code: 400);
             echo json_encode([
                 'message' => strtoupper(string: "File exceeds " . self::MAX_FILE_SIZE_MB . " MB limit."),
                 'status' => 'error'
@@ -206,8 +206,11 @@ class APIModels
         $destination = UPLOADS . $filename;
         // Move uploaded file
         if (!move_uploaded_file($file['tmp_name'], $destination)) {
-            http_response_code(500);
-            echo json_encode(['success' => false, 'error' => 'Failed to save file']);
+            http_response_code(response_code: 500);
+            echo json_encode([
+                'message' => strtoupper(string: "Failed to save file"),
+                'status' => 'error'
+            ]);
             return false;
         }
         header(header: "Content-Type: application/json; charset=UTF-8");
