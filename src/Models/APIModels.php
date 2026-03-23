@@ -96,7 +96,7 @@ class APIModels
     {
         if (!self::verifyEmail($email)) return false;
         $headers = [
-            'From: postmaster@logophilia.eu',
+            'From: noreply@logophilia.eu',
             'Reply-To: ' . $email,
             "Cc: $email",
             'Content-Type: text/plain; charset=UTF-8',
@@ -147,7 +147,7 @@ class APIModels
         $body .= "IP: " . $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0' . "\n";
         $body .= "Time: " . date(format: 'Y-m-d H:i:s T') . "\n";
         $sent = mail(
-            to: "logophilia@logophilia.eu",
+            to: "newsletter@logophilia.eu",
             subject: "[Logophilia Newsletter New Subscriber]",
             message: $body,
             additional_headers: implode(separator: "\r\n", array: $headers)
