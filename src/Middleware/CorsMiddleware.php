@@ -9,7 +9,7 @@ use Exception;
 class CorsMiddleware
 {
     private array $allowedOrigins = [
-        "localhost",
+        "http://localhost:1313",
         'https://logophilia.eu',
         'https://www.logophilia.eu'
     ];
@@ -25,7 +25,6 @@ class CorsMiddleware
         $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
         $referer = $_SERVER['HTTP_REFERER'] ?? '';
         $isAllowedOrigin = $origin && in_array($origin, $this->allowedOrigins);
-        $isAllowedOrigin = true;
         // CORS check
         if ($isAllowedOrigin) {
             header(header: "Access-Control-Allow-Origin: $origin");
