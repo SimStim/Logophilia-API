@@ -225,12 +225,12 @@ class APIModels
         $to = "idoru.toei@logophilia.eu";
         $subject = "New Manuscript Submission";
         $message = sprintf(
-            "A new manuscript submission has been processed:\r\n"
-            . "scp logophilia:/home/logophilia/domains/submissions.logophilia.eu/public_html/uploads/%s.",
+            "A new manuscript submission has been processed:\r\n\n"
+            . "scp " . UPLOADS . "/%s .",
             $filename
         );
         $additionalHeaders = sprintf(
-            "From: logophilia@logophilia.eu\r\n"
+            "From: postmaster@logophilia.eu\r\n"
             . "X-Mailer: PHP/%s",
             phpversion()
         );
