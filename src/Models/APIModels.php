@@ -226,7 +226,7 @@ class APIModels
         $subject = "New Manuscript Submission";
         $message = sprintf(
             "A new manuscript submission has been processed:\r\n\n"
-            . "scp " . UPLOADS . "/%s .",
+            . "scp logophilia:" . UPLOADS . "%s .",
             $filename
         );
         $additionalHeaders = sprintf(
