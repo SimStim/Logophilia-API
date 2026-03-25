@@ -10,7 +10,6 @@ class CorsMiddleware
 {
     private array $allowedOrigins = [
         "http://localhost:1313",
-        "https://refresh.usha-ludwig.vip",
         'https://logophilia.eu',
         'https://www.logophilia.eu'
     ];
