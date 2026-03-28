@@ -32,7 +32,7 @@ class AuthMiddleware
             echo json_encode([
                 'status' => 'error',
                 'message' => strtoupper(string: 'Forbidden: Invalid API Key.')
-
+                    . print_r($this->validKeys, true)
             ]);
             exit;
         }
