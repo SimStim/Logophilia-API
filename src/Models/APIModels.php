@@ -16,10 +16,10 @@ class APIModels
         if (count($parts) !== 2) return false;
         $domain = $parts[1];
         // Check MX records
-        if (!getmxrr(hostname: $domain, hosts: $mxHosts))
+        if (!getmxrr(hostname: $domain, hosts: $mxHosts)) {
             if (!checkdnsrr(hostname: $domain, type: 'A'))
                 return false;
-        $mxHosts = [$domain];
+        }
         return true;
     }
 
@@ -30,6 +30,7 @@ class APIModels
             return false;
         $domain = $parts[1];
         $mxHosts = [];
+        $mxWeights = [];
         if (!getmxrr(hostname: $domain, hosts: $mxHosts, weights: $mxWeights))
             $mxHosts = [$domain];
         if (!empty($mxWeights))
@@ -108,7 +109,7 @@ class APIModels
         $body .= "Message:\n$message\n\n";
         $body .= "---\n";
         $body .= "Consent: $consent\n";
-        $body .= "IP: " . $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0' . "\n";
+        $body .= "IP: " . ($_SERVER['REMOTE_ADDR'] ?? '0.0.0.0') . "\n";
         $body .= "Time: " . date(format: 'Y-m-d H:i:s T') . "\n";
         $sent = mail(
             to: "contact@logophilia.eu",
@@ -144,7 +145,7 @@ class APIModels
         ];
         $body = "New newsletter subscriber: $email\n";
         $body .= "Consent: $consent\n";
-        $body .= "IP: " . $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0' . "\n";
+        $body .= "IP: " . ($_SERVER['REMOTE_ADDR'] ?? '0.0.0.0') . "\n";
         $body .= "Time: " . date(format: 'Y-m-d H:i:s T') . "\n";
         $sent = mail(
             to: "newsletter@logophilia.eu",

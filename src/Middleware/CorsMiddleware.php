@@ -11,6 +11,7 @@ class CorsMiddleware
     private array $allowedOrigins = [
         "http://localhost:1313",
         'https://logophilia.eu',
+        'https://logophilia.eu/newsletter',
         'https://www.logophilia.eu'
     ];
 
@@ -22,7 +23,7 @@ class CorsMiddleware
      */
     public function handle(bool $testing = false): void
     {
-        $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
+        $origin = rtrim($_SERVER['HTTP_ORIGIN'] ?? '', '/');
         $referer = $_SERVER['HTTP_REFERER'] ?? '';
         $isAllowedOrigin = $origin && in_array($origin, $this->allowedOrigins);
         // CORS check
