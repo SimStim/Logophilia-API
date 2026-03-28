@@ -10,7 +10,7 @@ class AuthMiddleware
 
     public function __construct()
     {
-        $this->validKeys[] = $_ENV['HTTP_X_API_KEY'];
+        $this->validKeys[] = $_ENV['HTTP_X_API_KEY'] ?? $_SERVER['HTTP_X_API_KEY'] ?? null;
     }
 
     /**
@@ -19,7 +19,7 @@ class AuthMiddleware
      */
     public function handle(): void
     {
-        $apiKey = $_SERVER['HTTP_X_API_KEY'] ?? null;
+        $apiKey = $_SERVER['HTTP_X_API_KEY'] ?? $_SERVER['HTTP_AUTHORIZATION'] ?? null;
         if ($apiKey === null) {
             http_response_code(response_code: 401);
             echo json_encode([
