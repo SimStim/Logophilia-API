@@ -13,12 +13,6 @@ use App\Middleware\AuthMiddleware;
 use App\Middleware\CorsMiddleware;
 
 try {
-    new CorsMiddleware()->handle();
-} catch (Exception $e) {
-    exit($e->getMessage());
-}
-
-try {
     new AuthMiddleware()->handle();
 } catch (Exception $e) {
     exit($e->getMessage());
