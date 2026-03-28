@@ -6,11 +6,10 @@ namespace App\Middleware;
 
 class AuthMiddleware
 {
-    private array $validKeys = [];
-
-    public function __construct()
-    {
-        $this->validKeys[] = $_ENV['HTTP_X_API_KEY'];
+    private array $validKeys {
+        get => $this->validKeys ??= [
+            $_ENV['HTTP_X_API_KEY'],
+        ];
     }
 
     /**
@@ -24,7 +23,7 @@ class AuthMiddleware
             http_response_code(response_code: 401);
             echo json_encode([
                 'status' => 'error',
-                'message' => strtoupper('Unauthorized: API Key is missing.')
+                'message' => strtoupper(string: 'Unauthorized: API Key is missing.')
             ]);
             exit;
         }
@@ -32,7 +31,7 @@ class AuthMiddleware
             http_response_code(response_code: 403);
             echo json_encode([
                 'status' => 'error',
-                'message' => strtoupper('Forbidden: Invalid API Key.')
+                'message' => strtoupper(string: 'Forbidden: Invalid API Key.')
             ]);
             exit;
         }
