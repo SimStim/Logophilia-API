@@ -10,7 +10,7 @@ use App\Controllers\APIControllers;
 use App\Middleware\AuthMiddleware;
 use App\Middleware\CorsMiddleware;
 
-$dotenv = Dotenv\Dotenv::createImmutable(realpath(path: __DIR__ . '/../'));
+$dotenv = Dotenv\Dotenv::createMutable(realpath(path: __DIR__ . '/../'));
 $dotenv->load();
 
 try {
