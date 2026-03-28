@@ -13,6 +13,8 @@ use App\Middleware\CorsMiddleware;
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../');
 $dotenv->load();
 
+echo $_ENV['HTTP_X_API_KEY'];
+exit;
 try {
     new CorsMiddleware()->handle();
     new AuthMiddleware()->handle();

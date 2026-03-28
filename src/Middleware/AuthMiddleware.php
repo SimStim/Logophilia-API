@@ -6,11 +6,10 @@ namespace App\Middleware;
 
 class AuthMiddleware
 {
-    private array $validKeys;
-
-    public function __construct()
-    {
-        $this->validKeys = array($_ENV['HTTP_X_API_KEY']);
+    private array $validKeys {
+        get => $this->validKeys ??= [
+            $_ENV['HTTP_X_API_KEY'],
+        ];
     }
 
     /**
@@ -33,7 +32,6 @@ class AuthMiddleware
             echo json_encode([
                 'status' => 'error',
                 'message' => strtoupper(string: 'Forbidden: Invalid API Key.')
-                    . print_r($this->validKeys, true)
             ]);
             exit;
         }
