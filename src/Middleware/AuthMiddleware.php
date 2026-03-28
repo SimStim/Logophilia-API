@@ -7,9 +7,8 @@ namespace App\Middleware;
 class AuthMiddleware
 {
     private array $validKeys {
-        get => $this->validKeys = [
-            $_ENV['HTTP_X_API_KEY'],
-        ];
+        get => $this->validKeys =
+            $_ENV['HTTP_X_API_KEY'];
     }
 
     /**
