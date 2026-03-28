@@ -6,9 +6,12 @@ namespace App\Middleware;
 
 class AuthMiddleware
 {
-    private array $validKeys = [
-        '247e5c56d2619ee9d29c4c56d69cacf917b49a572696ea60ba742d365b983112',
-    ];
+    private array $validKeys = [];
+
+    public function __construct()
+    {
+        $this->validKeys[] = $_ENV['HTTP_X_API_KEY'];
+    }
 
     /**
      * Handle the authentication request
