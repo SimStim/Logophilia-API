@@ -9,7 +9,7 @@ use Exception;
 class CorsMiddleware
 {
     private array $allowedOrigins = [
-        "localhost:1313",
+        "http://localhost:1313",
         'https://logophilia.eu',
         'https://www.logophilia.eu'
     ];
