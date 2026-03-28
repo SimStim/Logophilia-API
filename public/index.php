@@ -10,10 +10,11 @@ use App\Controllers\APIControllers;
 use App\Middleware\AuthMiddleware;
 use App\Middleware\CorsMiddleware;
 
-$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../');
+$dotenv = Dotenv\Dotenv::createImmutable(realpath(path: __DIR__ . '/../'));
 $dotenv->load();
 
-echo $_ENV['HTTP_X_API_KEY'];
+echo $_ENV['HTTP_X_API_KEY'] . PHP_EOL;
+var_dump($dotenv);
 exit;
 try {
     new CorsMiddleware()->handle();
