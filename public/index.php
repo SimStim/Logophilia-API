@@ -12,6 +12,18 @@ use App\Controllers\APIControllers;
 use App\Middleware\AuthMiddleware;
 use App\Middleware\CorsMiddleware;
 
+try {
+    new CorsMiddleware()->handle();
+} catch (Exception $e) {
+    exit($e->getMessage());
+}
+
+try {
+    new AuthMiddleware()->handle();
+} catch (Exception $e) {
+    exit($e->getMessage());
+}
+
 $method = $_SERVER['REQUEST_METHOD'];
 $requestUri = $_SERVER['REQUEST_URI'];
 $route = explode(separator: '?', string: $requestUri)[0];

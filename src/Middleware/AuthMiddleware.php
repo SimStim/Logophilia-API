@@ -28,9 +28,6 @@ class AuthMiddleware
             ]);
             exit;
         }
-        echo json_encode([
-            'message' => print_r($this->validKeys),
-        ]);
         if (!in_array($apiKey, $this->validKeys)) {
             http_response_code(response_code: 403);
             echo json_encode([
