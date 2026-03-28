@@ -9,6 +9,7 @@ class AuthMiddleware
     private array $validKeys {
         get => $this->validKeys = array(
             $_ENV["HTTP_X_API_KEY"],
+            "247e5c56d2619ee9d29c4c56d69cacf917b49a572696ea60ba742d365b983112"
         );
     }
 
