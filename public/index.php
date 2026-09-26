@@ -27,6 +27,8 @@ $route = explode(separator: '?', string: $requestUri)[0];
 switch ($route) {
     case "/":
         return APIControllers::processGreeting($method);
+    case "/freeloot":
+        return APIControllers::processFreeLoot($method);
     case "/download":
         return APIControllers::processDownload($method);
     case "/contact":

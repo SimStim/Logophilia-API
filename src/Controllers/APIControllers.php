@@ -80,6 +80,13 @@ final class APIControllers
         return APIModels::processSubmission();
     }
 
+
+    public static function processFreeLoot(): bool
+    {
+        if (!self::checkMethod(actualMethod: $method, permittedMethod: 'GET')) return false;
+        return APIModels::sendFileList();
+    }
+
     public static function processDownload(string $method): bool
     {
         if (!self::checkMethod(actualMethod: $method, permittedMethod: 'GET')) return false;

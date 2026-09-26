@@ -243,6 +243,14 @@ class APIModels
         );
     }
 
+    public static function sendFileList()
+    {
+        $filePath = DOWNLOADS;
+        $files = scandir($filePath);
+        $fileList = array_diff($files, ['.', '..']);
+        return json_encode($fileList);
+    }
+
     public static function sendFile(string $fileName): bool
     {
         $filePath = DOWNLOADS . $fileName;
