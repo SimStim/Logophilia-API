@@ -255,13 +255,15 @@ class APIModels
                 'status' => 'error'
             ]);
             return false;
+        } else {
+            header(header: "Content-Type: application/json; charset=UTF-8");
+            echo json_encode([
+                'message' => 'This is the end of the world as we know it: there is no free loot!',
+                'freeloot' => $fileList,
+                'status' => 'success'
+            ]);
+            return true;
         }
-        echo json_encode([
-            'message' => 'This is the end of the world as we know it: there is no free loot!',
-            'freeloot' => $fileList,
-            'status' => 'success'
-        ]);
-        return true;
     }
 
     public static function sendFile(string $fileName): bool
