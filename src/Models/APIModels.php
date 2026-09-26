@@ -9,6 +9,8 @@ class APIModels
     private const int SMTP_TIMEOUT = 5;
     private const int MAX_FILE_SIZE_MB = 10;
     private const int MAX_FILE_SIZE_BYTES = self::MAX_FILE_SIZE_MB * 1024 * 1024;
+    private const string HASH_EXTENSION = '.hash';
+    private const string HASH_ALGORITHM = 'sha256';
 
     private static function verifyEmailDomain(string $email): bool
     {
@@ -247,19 +249,40 @@ class APIModels
     {
         $filePath = DOWNLOADS;
         $files = scandir($filePath);
-        $fileList = array_diff($files, ['.', '..']);
+        $fileList = array_values(array_filter(
+            array: array_diff($files, ['.', '..']),
+            callback: static fn(string $fileName): bool => !str_ends_with(haystack: $fileName, needle: self::HASH_EXTENSION)
+        ));
         if (empty($fileList)) {
             header(header: "Content-Type: application/json; charset=UTF-8");
             echo json_encode([
                 'message' => 'This is the end of the world as we know it: there is no free loot!',
+                'freeloot' => [],
                 'status' => 'error'
             ]);
             return false;
         } else {
+            $freeloot = [];
+            foreach ($fileList as $fileName) {
+                $file = $filePath . $fileName;
+                $hashFile = $file . self::HASH_EXTENSION;
+                if (is_file($hashFile) && filemtime($hashFile) < filemtime($file))
+                    unlink($hashFile);
+                $hash = is_file($hashFile) ? file_get_contents($hashFile) : '';
+                if (!preg_match(pattern: '/^[0-9a-f]{64}$/', subject: $hash)) {
+                    $hash = hash_file(algo: self::HASH_ALGORITHM, filename: $file);
+                    file_put_contents($hashFile, $hash);
+                }
+                $freeloot[] = [
+                    'name' => $fileName,
+                    'size' => filesize($file),
+                    'sha256' => $hash
+                ];
+            }
             header(header: "Content-Type: application/json; charset=UTF-8");
             echo json_encode([
-                'message' => 'This is the end of the world as we know it: there is no free loot!',
-                'freeloot' => $fileList,
+                'message' => 'Here is your free loot!',
+                'freeloot' => $freeloot,
                 'status' => 'success'
             ]);
             return true;
