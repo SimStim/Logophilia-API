@@ -243,12 +243,25 @@ class APIModels
         );
     }
 
-    public static function sendFileList(): string
+    public static function sendFileList(): bool
     {
         $filePath = DOWNLOADS;
         $files = scandir($filePath);
         $fileList = array_diff($files, ['.', '..']);
-        return json_encode($fileList);
+        if (empty($fileList)) {
+            header(header: "Content-Type: application/json; charset=UTF-8");
+            echo json_encode([
+                'message' => 'This is the end of the world as we know it: there is no free loot!',
+                'status' => 'error'
+            ]);
+            return false;
+        }
+        echo json_encode([
+            'message' => 'This is the end of the world as we know it: there is no free loot!',
+            'freeloot' => json_encode($fileList),
+            'status' => 'success'
+        ]);
+        return true;
     }
 
     public static function sendFile(string $fileName): bool
