@@ -249,10 +249,9 @@ class APIModels
     {
         $filePath = DOWNLOADS;
         $files = scandir($filePath);
-        $fileList = array_values(array_filter(
-            array: array_diff($files, ['.', '..']),
-            callback: static fn(string $fileName): bool => !str_ends_with(haystack: $fileName, needle: self::HASH_EXTENSION)
-        ));
+        $fileList = array_diff($files, ['.', '..'])
+                |> (fn($x) => array_filter(array: $x, callback: static fn(string $fileName): bool => !str_ends_with(haystack: $fileName, needle: self::HASH_EXTENSION)))
+                |> array_values(...);
         if (empty($fileList)) {
             header(header: "Content-Type: application/json; charset=UTF-8");
             echo json_encode([
@@ -268,11 +267,11 @@ class APIModels
                 $hashFile = $file . self::HASH_EXTENSION;
                 if (is_file($hashFile) && filemtime($hashFile) < filemtime($file))
                     unlink($hashFile);
-                $hash = is_file($hashFile) ? file_get_contents($hashFile) : '';
-                if (!preg_match(pattern: '/^[0-9a-f]{64}$/', subject: $hash)) {
+                if (!is_file($hashFile)) {
                     $hash = hash_file(algo: self::HASH_ALGORITHM, filename: $file);
                     file_put_contents($hashFile, $hash);
                 }
+                $hash = trim(file_get_contents($hashFile));
                 $freeloot[] = [
                     'name' => $fileName,
                     'size' => filesize($file),
