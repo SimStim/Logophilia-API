@@ -243,7 +243,7 @@ class APIModels
         );
     }
 
-    public static function sendFileList()
+    public static function sendFileList(): string
     {
         $filePath = DOWNLOADS;
         $files = scandir($filePath);
