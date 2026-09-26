@@ -258,7 +258,7 @@ class APIModels
         }
         echo json_encode([
             'message' => 'This is the end of the world as we know it: there is no free loot!',
-            'freeloot' => json_encode($fileList),
+            'freeloot' => $fileList,
             'status' => 'success'
         ]);
         return true;
