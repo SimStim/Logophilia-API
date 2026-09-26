@@ -81,7 +81,7 @@ final class APIControllers
     }
 
 
-    public static function processFreeLoot(): bool
+    public static function processFreeLoot(string $method): bool
     {
         if (!self::checkMethod(actualMethod: $method, permittedMethod: 'GET')) return false;
         return APIModels::sendFileList();
