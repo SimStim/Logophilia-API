@@ -11,6 +11,7 @@ class APIModels
     private const int MAX_FILE_SIZE_BYTES = self::MAX_FILE_SIZE_MB * 1024 * 1024;
     private const string HASH_EXTENSION = '.hash';
     private const string HASH_ALGORITHM = 'sha256';
+    private const string SENT_EXTENSION = '.sent';
 
     private static function verifyEmailDomain(string $email): bool
     {
@@ -75,6 +76,14 @@ class APIModels
 
     private static function verifyEmail(string $email): bool
     {
+        if (strpbrk(string: $email, characters: "\r\n") !== false) {
+            http_response_code(response_code: 422);
+            echo json_encode([
+                'message' => strtoupper(string: 'The email address contains invalid characters.'),
+                'status' => 'error'
+            ]);
+            return false;
+        }
         if (!self::verifyEmailDomain($email)) {
             http_response_code(response_code: 422);
             echo json_encode([
@@ -205,10 +214,11 @@ class APIModels
             ]);
             return false;
         }
-        // Generate hash-based filename
+        // Generate hash-based filename; the original extension is appended with a
+        // "-" instead of a "." so the stored name can never be an executable type.
         $fileHash = hash_file(algo: 'sha256', filename: $file['tmp_name']);
         $extension = pathinfo(path: $file['name'], flags: PATHINFO_EXTENSION);
-        $filename = $fileHash . ($extension ? "." . $extension : "");
+        $filename = $fileHash . ($extension ? "-" . $extension : "");
         $destination = UPLOADS . $filename;
         // Move uploaded file
         if (!move_uploaded_file($file['tmp_name'], $destination)) {
@@ -250,7 +260,13 @@ class APIModels
         $filePath = DOWNLOADS;
         $files = scandir($filePath);
         $fileList = array_diff($files, ['.', '..'])
-                |> (fn($x) => array_filter(array: $x, callback: static fn(string $fileName): bool => !str_ends_with(haystack: $fileName, needle: self::HASH_EXTENSION)))
+                |> (fn($x) => array_filter(
+                    array: $x,
+                    callback: static fn(string $fileName): bool => !str_starts_with(haystack: $fileName, needle: '.')
+                        && !str_ends_with(haystack: $fileName, needle: self::HASH_EXTENSION)
+                        && !str_ends_with(haystack: $fileName, needle: self::SENT_EXTENSION)
+                        && !is_link(filename: $filePath . $fileName)
+                ))
                 |> array_values(...);
         if (empty($fileList)) {
             header(header: "Content-Type: application/json; charset=UTF-8");
@@ -269,7 +285,11 @@ class APIModels
                     unlink($hashFile);
                 if (!is_file($hashFile)) {
                     $hash = hash_file(algo: self::HASH_ALGORITHM, filename: $file);
-                    file_put_contents($hashFile, $hash);
+                    // Write a dot-prefixed temp file and rename it atomically, so
+                    // concurrent list requests never read an empty or partial hash.
+                    $tempFile = DOWNLOADS . '.' . $fileName . self::HASH_EXTENSION . '.tmp';
+                    if (file_put_contents($tempFile, $hash, flags: LOCK_EX) !== false)
+                        @rename($tempFile, $hashFile);
                 }
                 $hash = trim(file_get_contents($hashFile));
                 $freeloot[] = [
@@ -290,8 +310,27 @@ class APIModels
 
     public static function sendFile(string $fileName): bool
     {
+        $fileName = basename($fileName);
         $filePath = DOWNLOADS . $fileName;
-        if (file_exists($filePath)) {
+        $isAllowed = $fileName !== ''
+            && !str_starts_with(haystack: $fileName, needle: '.')
+            && !str_ends_with(haystack: $fileName, needle: self::HASH_EXTENSION)
+            && !str_ends_with(haystack: $fileName, needle: self::SENT_EXTENSION)
+            && file_exists($filePath)
+            && str_starts_with(haystack: (string) realpath(path: $filePath), needle: (string) realpath(path: DOWNLOADS) . DIRECTORY_SEPARATOR);
+        if ($isAllowed) {
+            // Sent counter beside the file: filename.ext.sent (mirrors the .hash convention).
+            $fileSent = $filePath . self::SENT_EXTENSION;
+            if (($handle = fopen(filename: $fileSent, mode: 'c+')) !== false) {
+                flock(stream: $handle, operation: LOCK_EX);
+                $count = (int)trim((string)stream_get_contents(stream: $handle));
+                ftruncate($handle, 0);
+                rewind($handle);
+                fwrite($handle, data: (string)($count + 1));
+                fflush($handle);
+                flock(stream: $handle, operation: LOCK_UN);
+                fclose($handle);
+            }
             header(header: "Content-Description: File Transfer");
             header(header: "Content-Type: application/octet-stream");
             header(header: "Content-Disposition: attachment; filename=\"$fileName\"");
