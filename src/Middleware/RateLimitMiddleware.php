@@ -30,7 +30,7 @@ class RateLimitMiddleware
         // Fail open: an unwritable directory must never take the API down.
         if (($handle = fopen(filename: $counterFile, mode: 'c+')) === false) return;
         flock(stream: $handle, operation: LOCK_EX);
-        $parts = sscanf(trim((string) stream_get_contents(stream: $handle)), '%d %d') ?: [];
+        $parts = sscanf(trim((string)stream_get_contents(stream: $handle)), '%d %d') ?: [];
         $windowStart = $parts[0] ?? 0;
         $count = $parts[1] ?? 0;
         if ($now - $windowStart >= self::WINDOW_SECONDS) {
@@ -52,7 +52,7 @@ class RateLimitMiddleware
         $count++;
         ftruncate($handle, 0);
         rewind($handle);
-        fwrite($handle, data: "{$windowStart} {$count}");
+        fwrite($handle, data: "$windowStart $count");
         fflush($handle);
         flock(stream: $handle, operation: LOCK_UN);
         fclose($handle);

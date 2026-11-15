@@ -317,7 +317,7 @@ class APIModels
             && !str_ends_with(haystack: $fileName, needle: self::HASH_EXTENSION)
             && !str_ends_with(haystack: $fileName, needle: self::SENT_EXTENSION)
             && file_exists($filePath)
-            && str_starts_with(haystack: (string) realpath(path: $filePath), needle: (string) realpath(path: DOWNLOADS) . DIRECTORY_SEPARATOR);
+            && str_starts_with(haystack: (string)realpath(path: $filePath), needle: DOWNLOADS);
         if ($isAllowed) {
             // Sent counter beside the file: filename.ext.sent (mirrors the .hash convention).
             $fileSent = $filePath . self::SENT_EXTENSION;
