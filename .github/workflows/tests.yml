@@ -1,13 +1,18 @@
 # Runs the API test suite on every push. tests/run.php emits GitHub Actions
 # workflow commands (::group::, ::error::, ::notice::) and exits with the
 # number of failed tests, so any non-zero exit fails this job automatically.
-name: Tests
+name: Basic API tests
+
+# Run titles default to the commit message; pin it to something stable.
+run-name: Basic API tests
 
 on: push
 
 jobs:
   tests:
-    runs-on: ubuntu-latest
+    # Pinned instead of ubuntu-latest, whose migration notice otherwise shows
+    # up as an annotation on every run (runner-images issue #14748).
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v5
 
