@@ -16,6 +16,10 @@ require_once __DIR__ . '/../src/Models/APIModels.php';
 // state lives in a scratch directory outside the repository. No mail is ever
 // sent: the email tests stop at the CRLF guard or at an unresolvable domain,
 // before mail().
+//
+// Output uses GitHub Actions workflow commands: each section is a ::group::
+// collapsible block, every failed check emits an ::error:: annotation, and the
+// summary is a ::notice::. The exit code is the number of failed tests.
 
 ini_set('display_errors', 'stderr');
 // CLI has no real HTTP headers, so header() calls warn once output exists; silence those.
@@ -32,11 +36,31 @@ define('RATELIMITS', $base . '/ratelimit/');
 $pass = 0;
 $failures = [];
 
+// Escapes a string for use in a GitHub Actions workflow command message.
+function esc(string $s): string
+{
+    return str_replace(['%', "\r", "\n"], ['%25', '%0D', '%0A'], $s);
+}
+
+// Opens a collapsible log group, closing the previous one.
+function section(string $title): void
+{
+    static $open = false;
+    if ($open) echo "::endgroup::\n";
+    $open = true;
+    echo '::group::' . esc($title) . "\n";
+}
+
 function check(string $name, bool $condition): void
 {
     global $pass, $failures;
-    echo $condition ? "  ok  $name\n" : "  FAIL $name\n";
-    if ($condition) $pass++; else $failures[] = $name;
+    if ($condition) {
+        $pass++;
+        echo "  ok  $name\n";
+    } else {
+        $failures[] = $name;
+        echo '::error::' . esc($name) . "\n";
+    }
 }
 
 function captured(callable $fn): array
@@ -63,7 +87,7 @@ function spawn_workers(int $count, array $args): string
 }
 
 // ---------- sendFile: input guard and download counter ----------
-echo "sendFile guard + counter\n";
+section('sendFile guard + counter');
 file_put_contents(DOWNLOADS . 'Loot One.epub', 'A');
 file_put_contents(DOWNLOADS . 'Loot One.epub.hash', 'stale');
 touch(DOWNLOADS . 'Loot One.epub.hash', time() - 86400);
@@ -97,14 +121,14 @@ check('canonicalizes sub/../ to the same file', $result === true && $out === 'A'
 check('counter only counts successful sends', file_get_contents(DOWNLOADS . 'Loot One.epub.sent') === '2');
 
 // ---------- sendFile counter under concurrency ----------
-echo "sendFile counter under concurrency\n";
+section('sendFile counter under concurrency');
 file_put_contents(DOWNLOADS . 'Loot One.epub.sent', '41');
 $raw = spawn_workers(20, ['download', 'Loot One.epub']);
 check('20 concurrent downloads add exactly 20 (41 -> 61)',
     substr_count($raw, 'SENT') === 20 && file_get_contents(DOWNLOADS . 'Loot One.epub.sent') === '61');
 
 // ---------- sendFileList: filtering and hashing ----------
-echo "sendFileList filtering + hashing\n";
+section('sendFileList filtering + hashing');
 [$result, $out] = captured(fn() => APIModels::sendFileList());
 $json = json_decode($out, true);
 $sha256ByName = array_column(array: $json['freeloot'] ?? [], column_key: 'sha256', index_key: 'name');
@@ -115,7 +139,7 @@ check('stale hash regenerated', file_get_contents(DOWNLOADS . 'Loot One.epub.has
 check('fresh hash left untouched', file_get_contents(DOWNLOADS . 'Loot Two.pdf.hash') === 'fresh-correct');
 
 // ---------- sendFileList: atomic hash creation under concurrency ----------
-echo "sendFileList hash creation under concurrency\n";
+section('sendFileList hash creation under concurrency');
 file_put_contents(DOWNLOADS . 'Loot Three.epub', 'C');
 $raw = spawn_workers(20, ['list']);
 check('20 concurrent listers produce the correct hash',
@@ -123,7 +147,7 @@ check('20 concurrent listers produce the correct hash',
 check('no temp files left behind', glob(DOWNLOADS . '.*.tmp') === []);
 
 // ---------- RateLimitMiddleware ----------
-echo "RateLimitMiddleware\n";
+section('RateLimitMiddleware');
 $_SERVER['REQUEST_METHOD'] = 'POST';
 $_SERVER['REQUEST_URI'] = '/contact';
 $_SERVER['REMOTE_ADDR'] = '203.0.113.7';
@@ -173,14 +197,14 @@ check('20 concurrent posts: exactly 4 admitted',
     substr_count($raw, 'PASS') === 4 && substr_count($raw, 'LIMITED') === 16);
 
 // ---------- verifyEmail CRLF guard (via processNewsletter, no mail sent) ----------
-echo "verifyEmail CRLF guard\n";
+section('verifyEmail CRLF guard');
 [$result, $out] = captured(fn() => APIModels::processNewsletter("x\r\nBcc: victim@evil.com", 'yes'));
 check('rejects CRLF injection before DNS/SMTP', $result === false && str_contains($out, 'INVALID CHARACTERS'));
 [$result, $out] = captured(fn() => APIModels::processNewsletter('reader@nonexistent-abc.example', 'yes'));
 check('clean email proceeds to domain check', $result === false && str_contains($out, 'DOMAIN COULD NOT BE FOUND'));
 
 // ---------- AuthMiddleware: expected key vs provided header slot ----------
-echo "AuthMiddleware\n";
+section('AuthMiddleware');
 $_ENV['HTTP_X_API_KEY'] = 'valid-test-key';
 $auth = fn(): array => captured(function () {
     try {
@@ -223,9 +247,10 @@ $_SERVER['HTTP_X_API_KEY'] = 'wrong-test-key';
 check('empty expected key never matches', $result === false && str_contains($out, 'INVALID API KEY'));
 
 // ---------- summary ----------
-echo "\n$pass checks passed, " . count($failures) . " failed\n";
+echo "::endgroup::\n";
+echo '::notice::' . esc("$pass checks passed, " . count($failures) . ' failed') . "\n";
 if ($failures !== []) {
-    foreach ($failures as $failure) echo "  failed: $failure\n";
-    exit(1);
+    // Exit codes are taken mod 256, so cap the count.
+    exit(min(count($failures), 255));
 }
 exec('rm -rf ' . escapeshellarg($base));

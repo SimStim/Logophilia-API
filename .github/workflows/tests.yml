@@ -1,0 +1,19 @@
+# Runs the API test suite on every push. tests/run.php emits GitHub Actions
+# workflow commands (::group::, ::error::, ::notice::) and exits with the
+# number of failed tests, so any non-zero exit fails this job automatically.
+name: Tests
+
+on: push
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.5'
+
+      - name: Run test suite
+        run: php tests/run.php
